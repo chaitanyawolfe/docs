@@ -19,6 +19,8 @@ Luo's Quant Data and Analytics API provides a comprehensive research platform. T
 
 ## Getting Started
 
+Full Script is available [here](https://github.com/wolferesearch/docs/blob/master/code/demo/demo.R)
+
 ### Source the libraries (wquantR and lqtool)
 
 There two core R packages provided that offers a rich set of functions to retrieve and analyze data. The first step is to source these libraries in the R Session.
