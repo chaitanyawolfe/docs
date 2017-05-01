@@ -21,7 +21,12 @@ Luo's Quant Data and Analytics API provides a comprehensive research platform. T
 
 ### Source the libraries (wquantR and lqtool)
 
-There two core R packages provided that offers a rich set of functions to retrieve and analyze data. The first step is to source these libraries in the R Session
+There two core R packages provided that offers a rich set of functions to retrieve and analyze data. The first step is to source these libraries in the R Session.
+
+Documentation for these packages can be found within your RStudio install. You can find direct link to the document here 
+
+* [Data Query Engine](<https://github.com/wolferesearch/docs/blob/master/r-api/wquantR.pdf>)
+* [Analytics Library](https://github.com/wolferesearch/docs/blob/master/r-api/lqtool.pdf)
 
 ```R
 library(wquantR)
