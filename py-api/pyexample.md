@@ -33,7 +33,7 @@ endDate = '2017-02-28'
 
 ### Build the Request object
 ```python
-req=lq.newRequest().start(startDate).to(endDate).runFor(univ).at(freq).a(‘PRCCD’)
+req=lq.newRequest().start(startDate).to(endDate).runFor(univ).at(freq).a('PRCCD')
 ```
 
 ### Execute the data query request
