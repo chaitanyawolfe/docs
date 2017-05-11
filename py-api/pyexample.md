@@ -4,7 +4,7 @@
 ## Handle to the Data Query Engine
 ```python
 from lquantPy import LQuant
-lq=LQuant()
+lq=LQuant.LQuant()
 ```
 
 
