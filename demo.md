@@ -48,6 +48,11 @@ universeName<-'SP500'
 freq<-'1me'
 ```
 
+### Source Commmon Utility Functions
+```R
+source('/mnt/ebs1/data/util/util.R')
+```
+
 A simple function can be created to reduce the verbosity of code downstream. This function utilizes globally defined parameters. It only takes set of factors as argument. 
 
 ```R
