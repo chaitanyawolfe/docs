@@ -255,7 +255,7 @@ Regress Factor is custom function that uses the matrix format to regress the dep
 
 **Train the model using one year training period**
 ```R
-model_RF<-lqtool.modeling.learnRF(FMRTN1M,
+model_RF<-ltool.randomforest.learnRF(FMRTN1M,
   factor_data    = list(BETA=BETA,MKTCAP=norm_MKTCAP),
   trainingPeriod = c('2014-12-31','2015-12-31'))
 ```
@@ -266,15 +266,16 @@ model_RF<-lqtool.modeling.learnRF(FMRTN1M,
 
 **Predict for random forest**
 
-score_RF<-getScoreRF(factor_data,testDate,model_RF)
-
+```R
+score_RF<-ltool.randomforest.getScoreRF(factor_data,testDate,model_RF)
+```
 
 **How does it compare with Linear Regression model** 
 
 
 ```R
-coeffs<-ltool.modeling.linearCoeffs(FMRTN1M,factor_data,trainingPeriod)
-score_Linear<-ltool.modeling.getScoreLinear(factor_data,testDate,coeffs)
+coeffs<-ltool.regression.linearCoeffs(FMRTN1M,factor_data,trainingPeriod)
+score_Linear<-ltool.regression.getScoreLinear(factor_data,testDate,coeffs)
 cor(score_RF,score_Linear,use="complete.obs")
 ```
 
