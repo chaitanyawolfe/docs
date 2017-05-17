@@ -255,8 +255,10 @@ Regress Factor is custom function that uses the matrix format to regress the dep
 
 **Train the model using one year training period**
 ```R
+factor_data    = list(BETA=BETA,MKTCAP=norm_MKTCAP)
+
 model_RF<-ltool.randomforest.learnRF(FMRTN1M,
-  factor_data    = list(BETA=BETA,MKTCAP=norm_MKTCAP),
+  factor_data    = factor_data,
   trainingPeriod = c('2014-12-31','2015-12-31'))
 ```
 
