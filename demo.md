@@ -134,6 +134,22 @@ Beta can be computed by just providing the returns matrix. The beta is computed 
 BETA<-basic.calculateBeta(RTN,idx)
 ```
 
+
+### Idiosynchratic Volatility
+
+```R
+idioVolDaily = basic.idioVol(universeName,startDate,endDate)
+```
+
+Idiosynchratic volatility computation is memory and computational intensive. It provides volatility at daily frequency, you can project it to desired dates by getting the date/security projection projection vector. 
+
+```
+cname<-colnames(idioVolDaily)
+idioVol<-idioVolDaily[rownames(idx),sapply(colnames(idx), function(d) min(which(d<=cname)))]
+```
+
+
+
 ---
 ## Custom Factors 
 
@@ -382,3 +398,4 @@ gg <- ggplot(dataConcerned, aes(x = date,y=rate,group = CompanyName, fill=Compan
   scale_x_date(breaks = pretty_breaks(25),labels = date_format("%b-%y")) 
 gg + facet_grid(CompanyName ~ .)
 ```
+
