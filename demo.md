@@ -399,3 +399,58 @@ gg <- ggplot(dataConcerned, aes(x = date,y=rate,group = CompanyName, fill=Compan
 gg + facet_grid(CompanyName ~ .)
 ```
 
+
+## Backtesting weighted portfolio for multiperiod
+
+Here is an example of the portfolio of 3 stocks in the S&P 500, rebalanced on 2017-01-02 and 2017-02-02, and calculate the performance to 2017-03-24
+
+Set the basic parameters
+
+```R
+startDate<-'2016-12-31'
+endDate<-'2017-03-31'
+universeName<-'SP500'  
+freq<-'1d'
+getData<-function(factors){
+  wq.getdata(wq.newRequest()$runFor(universeName)$from(startDate)$to(endDate)$at(freq)$attr(.jarray(factors)))
+}
+```
+
+Fetch Data
+```R
+data<-getData(c('PRCCD','CUM_DIV','SEDOL'))
+```
+
+Create a portfolio with custom weights. We create named list with weight vector
+```R
+weightList<-list()
+weight<-c(0.5,0.2,0.3)
+names(weight)<-c("2005973", "B7341C6", "2190385")
+weightList[['2017-01-02']]<-weight
+
+weight<-c(0.2,0.3,0.5)
+names(weight)<-c("2005973", "B7341C6", "2190385")
+weightList[['2017-02-02']]<-weight
+```
+
+Get Prices and Dividend
+```R
+identifier<-data[['SEDOL']]
+dailyPrice<-data[['PRCCD']]
+dailyCumDiv<-data[['CUM_DIV']]
+```
+Run backtest
+```R
+rtn<-backtest.getDailyReturns(weightList, identifier, dailyPrice, dailyCumDiv, endDate='2017-03-24')
+```
+
+Get Stats
+```R
+wealth<- backtest.getWealth (rtn)
+Vol<- backtest.getVol(rtn)
+CAGR<- backtest.getCAGR(rtn)
+Sharpe<- backtest.getIR(rtn)
+maxDD<-backtest.getMaxDD(rtn)
+```
+
+
