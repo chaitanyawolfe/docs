@@ -1,10 +1,18 @@
-# Portfolio Upload Functions
+# LQuant Portfolio Upload 
 
-## *Supported Format* 
+
+
+LQuant Portfolio Upload module allows you to upload custom portfolio into your database space. The custom porfolio (identified by a string id), once uploaded can be used for backtesting. In addition custom portfolio can be used to add custom attributes into the database. 
+
+
+
+
+
+## **Supported Format**
 
 ### 1. Long Format
 	
-	Long Format is a true porfolio format with constituents for each rebalance date. Here is a minimalistic sample of long porfolio:
+Long Format is a true porfolio format with constituents for each rebalance date. Here is a minimalistic sample of long porfolio:
 
 |TICKER|DATED|
 |------|-----|
@@ -33,6 +41,7 @@ After uploading LQuant will make the universer constituents available to the use
 Short format is just membership list, hence it captures the tenure pair of security membership in the index, here is a simple example of portfolio in short format
 
 |TICKER|STARTDATE|ENDDATE|
+|------|---------|--------|
 |MSFT|30-Apr-2010|30-Jun-2010|
 |IBM |30-Apr-2010|30-May-2010|
 |AAPL|30-Apr-2010|30-Jun-2010|
@@ -45,11 +54,23 @@ While this format is quick to upload and faster to work with, this does not allo
 
 LQuant Portfolio Uploader supports SEDOL(7 character), TICKER and CUSIP(9 character) as identifier to link security internally. The security can be linked either using the point in time identifier (more accurate) or most recent identifier. The uploader uses the header names to detect the Identifier. In case there are multiple identifier in the file/data then it searches in the following order SEDOL, CUSIP, TICKER. 
 
+1. SEDOL
+2. CUSIP
+3. TICKER
 
-## Global vs US/Canada
+
+
+## Mapping (Global vs US/Canada)
 Portfolio can be uploaded in Global or US/Canada mode. Since internally LQuant maintains separate identifiers for US/Canada stocks, it is usually advisable to use the US/Canada mode for US/Canada universe. This way, there is less loss when mapping the identifier to internal one. 
 
 
+## R API
+
+R API is provided within the [wquantR](https://github.com/wolferesearch/docs/blob/master/r-api/wquantR.pdf) package hosted on our platform. The set of function exposed as wq.port provide access to the functions. Please the documentation within RStudio console for these functions. 
+
+
+## Python API
+Coming Soon
 
 
  
