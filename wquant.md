@@ -3,7 +3,7 @@
 
 ## Introduction
 
-LQuant is a Java based library that intermediates as data broker for
+LQuant is a Java based library that intermediates as data broker for interacting with financial data. We have integrated several data source in our cloud based database t 
 
 
 ## Infrastructure And Architecture
@@ -91,8 +91,6 @@ The word "*Factor*" or "*Attribute*" is used interchangeably throughout this doc
 
 
 
-
-## 
 
 
 
