@@ -35,7 +35,7 @@ In this example, the porfolio is specified at monthly frequency. For the first m
 |AAPL|31-May-2010|0.5|
 |GOOG|31-May-2010|0.3|
 
-Click [here]() to download a sample Long Format File. 
+Click [here](https://raw.githubusercontent.com/wolferesearch/docs/master/sample/LongFormatPort.csv) to download a sample Long Format File. 
 
 After uploading LQuant will make the universer constituents available to the user and also provide WEIGHT as a factor. 
 
@@ -52,7 +52,7 @@ Short format is just membership list, hence it captures the tenure pair of secur
 
 While this format is quick to upload and faster to work with, this does not allow custom attributes to be uploaded. 
 
-Click [here]() to download a sample Long Format File. 
+Click [here](https://raw.githubusercontent.com/wolferesearch/docs/master/sample/ShortFormatPort.csv) to download a sample Long Format File. 
 
 ## Identifier
 
