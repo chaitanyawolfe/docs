@@ -3,7 +3,7 @@
 
 ## Introduction
 
-LQuant is a Java based library that intermediates as data broker for interacting with financial data. We have integrated several data source in our cloud based database t 
+LQuant is a Java based library that intermediates as data broker for interacting with financial data. We have integrated several data source in our distributed cloud based databases. We have employed polyglot storage to store  
 
 
 ## Infrastructure And Architecture
@@ -15,7 +15,7 @@ LQuant is a Java based library that intermediates as data broker for interacting
 **LQuant** works with time series data. Broadly, the data within LQuant is organized in 3 main dimensions, entity, attribute and time. The relationship between them is as follows:
 
 1. Entity has many Attributes
-2. Attribute Value change with time
+2. Each Entity/Attribute pair is a time series.  
 
 
 A unique data point exist for the following set of dimensions:
