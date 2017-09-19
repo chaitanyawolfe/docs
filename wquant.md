@@ -3,7 +3,7 @@
 
 ## Introduction
 
-LQuant is a Java based library that intermediates as data broker for interacting with financial data. We have integrated several data source in our distributed cloud based databases. We have employed polyglot storage to store  
+LQuant is a Java based library that intermediates as data broker for interacting with financial data. We have integrated several data source in our distributed cloud based databases. We have employed polyglot storage to store structured and unstructured data sets. 
 
 
 ## Infrastructure And Architecture
