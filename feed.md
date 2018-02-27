@@ -102,7 +102,7 @@ library(httr)
 # Simple function to download data to temporary file
 client_downloader <- function(username, password, url_path){
   
-  tmp <- tempfile()
+
   base_url <- "http://feed.luoquant.com"
   url <- paste0(base_url,url_path)
   response <- GET(url,
@@ -112,16 +112,11 @@ client_downloader <- function(username, password, url_path){
   
   if(response$status_code == "200"){
     filename <- tail(strsplit(response$url, "/")[[1]], 1)
-    
-    #data <- read.csv(tmp)
-    #write.csv(data, filename)
-    #file.remove(tmp)
     print(paste( filename, "sucessfully downlaoded!", sep = " "))
     bin <- content(response, "raw")
     writeBin(bin, filename)
   }
   else{
-    file.remove(tmp)
     print(paste("HTTP ERROR CODE", response$status_code, sep = ":"))
     if(response$status_code == "404"){
       print("Object not found!")
