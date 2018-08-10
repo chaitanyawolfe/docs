@@ -1,28 +1,45 @@
+Update: Starting Aug 2018, Long Format is the default format for portfolio upload
+
+
 # LQuant Portfolio Upload 
-
-
 
 LQuant Portfolio Upload module allows you to upload custom portfolio into your database space. The custom porfolio (identified by a string id), once uploaded can be used for backtesting. In addition custom portfolio can be used to add custom attributes into the database. 
 
+Below are a few use cases for this feature
 
+1. Portfolio Tracking
+2. Portfolio Rebalance
+3. Portfolio Performance Summary
+4. Interest List Tracking
+5. Data Upload
 
+Portfolio upload system seamlessly ties with the backtesting library to provide several performance metrics, such as Sharpe Ratio, Draw Down and several more. 
 
+## Identifiers
 
-## **Supported Format**
+*Following Identifiers can be used to upload the portfolio:*
 
-### 1. Long Format
-	
-Long Format is a true porfolio format with constituents for each rebalance date. Here is a minimalistic sample of long porfolio:
+1. TICKER (US Only)
+   Ticker can be point in time or current known ticker. By default the ticker is assumed to be Point-in-Time. 
+2. SEDOL 
+   Sedol is the most robust identifier. System supports both point-in-time as well as last SEDOL for mapping. For US and CA companies, the SEDOL mapping only goes back to 2002
+3. CUSIP (US and Canada Only)
+   Cusip is a security level identifier that can be used. In case where we have more than one security per cusip, we map the US one if available, othewise we attempt to map to Canadian. The identifier can be specified as either point-in-time or most recent. 
+4. BBTICKER
+   Bloomberg Ticker is good recent updates. Our history for Bloomberg ticker only starts from May 2018. 
+5. QESID (This is internal 
+   This is QES internal idenfier
 
-|TICKER|DATED|
-|------|-----|
-|MSFT|30-Apr-2010|
-|AAPL|30-Apr-2010|
-|IBM|30-Apr-2010|
-|MSFT|31-May-2010|
-|AAPL|31-May-2010|
-|GOOG|31-May-2010|
+## Format
 
+Following keywords in the file or data frame header are looked for:
+
+1. DATED: Indicates date of Rebalance
+2. TICKER/BBTICKER/CUSIP/CUSIP8/SEDOL/SEDOL6/QESID: Indicates Identifier
+3. WEIGHT 
+4. ..
+
+Any number of additional properties can be added to the portfolio. All properties will become accessible for further processing using lquant library. 
 
 In this example, the porfolio is specified at monthly frequency. For the first month, we had MSFT, APPL and IBM, and for the second month IBM is dropped and GOOG is added. The  format allows you to add addition attributes that are uploaded as factor in the LQuant database, e.g., you can choose to add weights 
 
@@ -37,7 +54,42 @@ In this example, the porfolio is specified at monthly frequency. For the first m
 
 Click [here](https://raw.githubusercontent.com/wolferesearch/docs/master/sample/LongFormatPort.csv) to download a sample Long Format File. 
 
-After uploading LQuant will make the universer constituents available to the user and also provide WEIGHT as a factor. 
+After uploading LQuant will make the universe constituents available to the user and also provide WEIGHT as a factor. 
+
+# Summary
+
+Portfolio function provides a simple summary of the portfolio
+
+# Mapping
+
+
+## R API
+
+R API is provided within the [wquantR](https://github.com/wolferesearch/docs/blob/master/r-api/wquantR.pdf) package hosted on our platform. The set of function exposed as wq.port provide access to the functions. Please the documentation within RStudio console for these functions. 
+
+Here are specific example of the upload data
+
+
+#### Uploading Portfolio using *wq.port.uploadFile*
+
+```R
+myport<-wq.port.uploadFile('MyPortfolio1',''/mnt/ebs1/data/Share/sample/LongPort.csv',
+															,global=FALSE,pitId=FALSE,shortFormat=FALSE)
+```
+*myport* is and R6 class that provides handle to the uploaded object. You can use this handle to query properties of the porfolio. There are several methods available under this that provide access/mutation operation on the portfolio. By default, the portfolio uploaded is visible to other users within your space, however, if you want to make it private, that can be done by changing the security properties of the portfolio. Portfolio can be mutated by the user. 
+
+
+
+1. delete (Deletes the portfolio)
+2. exists (Checks if the portfolio exists in the database)
+3. id     (String id for the portfolio)
+4. owner  (Login name of the person who uploaded the portfolio)
+5. summary (Quick summary of the portfolio in terms of number of stocks and start date)
+6. unmapped (List of Unmapped identifiers)
+7. uploadAttributes(This is the method to upload the attributes and is only supported for long format file). This should be called immediately after the upload of long format file. 
+
+
+
 
 ### 2. Short Format
 
@@ -68,28 +120,7 @@ LQuant Portfolio Uploader supports SEDOL(7 character), TICKER and CUSIP(9 charac
 Portfolio can be uploaded in Global or US/Canada mode. Since internally LQuant maintains separate identifiers for US/Canada stocks, it is usually advisable to use the US/Canada mode for US/Canada universe. This way, there is less loss when mapping the identifier to internal one. 
 
 
-## R API
 
-R API is provided within the [wquantR](https://github.com/wolferesearch/docs/blob/master/r-api/wquantR.pdf) package hosted on our platform. The set of function exposed as wq.port provide access to the functions. Please the documentation within RStudio console for these functions. 
-
-Here are specific example of the upload data
-
-
-#### Uploading Portfolio using *wq.port.uploadFile*
-
-```R
-myport<-wq.port.uploadFile('MyPortfolio1',''/mnt/ebs1/data/Share/sample/LongPort.csv',
-															,global=FALSE,pitId=FALSE,shortFormat=FALSE)
-```
-*myport* is and R6 class that provides handle to the uploaded object. You can use this handle to query properties of the porfolio. It offers the following method
-
-1. delete (Deletes the portfolio)
-2. exists (Checks if the portfolio exists in the database)
-3. id     (String id for the portfolio)
-4. owner  (Login name of the person who uploaded the portfolio)
-5. summary (Quick summary of the portfolio in terms of number of stocks and start date)
-6. unmapped (List of Unmapped identifiers)
-7. uploadAttributes(This is the method to upload the attributes and is only supported for long format file). This should be called immediately after the upload of long format file. 
 
 
 Once the portfolio is uploaded you can use it as an LQuant Universe. For long format files, please ensure to call uploadAttributes() method in order to ensure that factor data is also persisted in the database. 
@@ -111,6 +142,10 @@ The above function will use the securities in the uploaded portfolio to query da
 ```
 
 The function takes a boolean flag to filter out porftolio portfolios that are uploaded by other users. Note that you can access other users portfolios, but cannot delete or update them. The id is unique in the system, hence if one user has used *MyPortfolio1* as the Id for the portfolio, it cannot be used by another user. 
+
+
+
+
 
 
 ## Python API
