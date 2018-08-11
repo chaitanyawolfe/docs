@@ -56,6 +56,22 @@ Click [here](https://raw.githubusercontent.com/wolferesearch/docs/master/sample/
 
 After uploading LQuant will make the universe constituents available to the user and also provide WEIGHT as a factor. 
 
+## 1. Uploading the portfolio
+
+Portfolio can be uploading using either R or python API. 
+
+```R
+myport<-wq.port.uploadFile('MyPortfolio1','/mnt/ebs1/data/Share/sample/LongPort.csv',global=FALSE,pitId=FALSE,shortFormat=FALSE)
+```
+
+```python
+from lquantPy import LQuant
+wq = LQuant.LQuant()
+myPort = wq.port_upload_file('MyPortfolio1','/mnt/ebs1/data/Share/sample/LongPort.csv',global=FALSE,pitId=FALSE,shortFormat=FALSE)
+```
+
+Portfolio object *myPort* allows you to access various information 
+
 # Summary
 
 Portfolio function provides a simple summary of the portfolio
