@@ -60,23 +60,105 @@ After uploading LQuant will make the universe constituents available to the user
 
 Portfolio can be uploading using either R or python API. 
 
+
+### RCode
 ```R
 myport<-wq.port.uploadFile('MyPortfolio1','/mnt/ebs1/data/Share/sample/LongPort.csv',global=FALSE,pitId=FALSE,shortFormat=FALSE)
 ```
 
+### Python Code
 ```python
 from lquantPy import LQuant
 wq = LQuant.LQuant()
 myPort = wq.port_upload_file('MyPortfolio1','/mnt/ebs1/data/Share/sample/LongPort.csv',global=FALSE,pitId=FALSE,shortFormat=FALSE)
 ```
 
-Portfolio object *myPort* allows you to access various information 
+*myport* is and R6 class that provides handle to the uploaded object. You can use this handle to query properties of the porfolio. There are several methods available under this that provide access/mutation operation on the portfolio. By default, the portfolio uploaded is visible to other users within your space, however, if you want to make it private, that can be done by changing the security properties of the portfolio. Portfolio can be mutated by the user. 
 
-# Summary
+## 2. Access API
 
-Portfolio function provides a simple summary of the portfolio
+### A. Summary
 
-# Mapping
+Provides a succinct summary of the portfolio, i.e., Start Date, End Date, Number of Securities, Mapped Securities. The output comes back a simple data frame. Below are code snippets from R and python languages
+
+### R Code
+```R
+myPort$summary()
+```
+### Python Code
+```python
+myPort.summary()
+```
+
+### B. Mapping
+
+The identifiers in the portfolio file are mapped to LQuant internal identifier (QESID). In some cases, when the system is unable to map them based on the criteria. In such a scenario, the unmapped securities can be accessed
+
+### R Code
+```R
+myPort$unmapped()
+```
+### Python Code
+```python
+myPort.unmapped()
+```
+
+### C. Attributes
+
+Additional columns in the uploaded file (or data frame) is exposed as lquant attributes (prefixed with universe id). List of attributes can be accessed via a simple function. Below is the code to access the list
+
+### R Code
+```R
+myPort$attributes()
+```
+### Python Code
+```python
+myPort.attributes()
+```
+
+### D. Owner
+
+The owner (username) can be accessed via owner function
+
+### R Code
+```R
+myPort$owner()
+```
+### Python Code
+```python
+myPort.owner()
+```
+
+### E. Dates
+
+Rebalance dates can be accessed via dates function
+
+### R Code
+```R
+myPort$dates()
+```
+### Python Code
+```python
+myPort.dates()
+```
+
+### F. Constituents
+
+There are 2 functions 
+
+### R Code
+```R
+myPort$dates()
+```
+### Python Code
+```python
+myPort.dates()
+```
+
+
+## Backtest API
+
+
 
 
 ## R API
