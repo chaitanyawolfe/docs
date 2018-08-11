@@ -56,7 +56,8 @@ Click [here](https://raw.githubusercontent.com/wolferesearch/docs/master/sample/
 
 After uploading LQuant will make the universe constituents available to the user and also provide WEIGHT as a factor. 
 
-## 1. Uploading the portfolio
+
+## 1. <span style="color:blue">Uploading the Portfolio</span>
 
 Portfolio can be uploading using either R or python API. 
 
@@ -89,6 +90,14 @@ myPort$summary()
 ```python
 myPort.summary()
 ```
+|Univ Id | Property | Value |
+|--------|---------|-------|
+|1|Mapping Type|US/Canada|
+|1|Total Securities|5|
+|1|Start Date|30-APR-10|
+|1|End Date|31-MAY-10|
+|1|Mapped Securities|4|
+
 
 ### B. Mapping
 
@@ -103,6 +112,10 @@ myPort$unmapped()
 myPort.unmapped()
 ```
 
+|UNIV_ID|ID|IDTYPE|FIRST_DATE|LAST_DATE|
+|-------|-|-------|----------|---------|
+|1|XXX|3|2010-05-31T00:00:00.000Z|2010-05-31T00:00:00.000Z|
+
 ### C. Attributes
 
 Additional columns in the uploaded file (or data frame) is exposed as lquant attributes (prefixed with universe id). List of attributes can be accessed via a simple function. Below is the code to access the list
@@ -115,6 +128,10 @@ myPort$attributes()
 ```python
 myPort.attributes()
 ```
+
+|Mnemonic|Expression|Function|Args|Description|Unit|Is Value|Frequency|Adjustment Type|Fx Adjustment|Staleness Threshold|
+|--|--|--|--|--|--|--|--|--|--|-|
+|XX1_WEIGHT|2||{\"UNIV_ID\":1041}|Custom Attribute -- WEIGHT -- created for universe XX1|WHOLE|No||None|No Adjustment|m|
 
 ### D. Owner
 
@@ -154,6 +171,13 @@ myPort$dates()
 ```python
 myPort.dates()
 ```
+
+|ID|WEIGHT|
+|--|-----|
+|012141.01|.2|
+|160329.01|.2|
+|001690.01|.5|
+
 
 
 ## Backtest API
