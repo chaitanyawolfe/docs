@@ -76,6 +76,11 @@ myport<-wq.port.uploadFile('XXX','LongPort.csv',global=FALSE,pitId=FALSE,shortFo
 myPort = wq.port_upload_file('XXX','LongPort.csv',global=FALSE,pitId=FALSE,shortFormat=FALSE)
 ```
 
+
+*myport* is and R6 class that provides handle to the uploaded object. You can use this handle to query properties of the porfolio. There are several methods available under this that provide access/mutation operation on the portfolio. By default, the portfolio uploaded is visible to other users within your space, however, if you want to make it private, that can be done by changing the security properties of the portfolio. Portfolio can be mutated by the user. 
+
+*Below are the arguments used by upload File API:*
+
 |Arg|Description|Default|
 |---|----|---|
 |id| Unique Id for the portfolio | None |
@@ -84,7 +89,6 @@ myPort = wq.port_upload_file('XXX','LongPort.csv',global=FALSE,pitId=FALSE,short
 |pitId|Boolean indicator, True indicates that provided identifiers are point in time |TRUE|
 |shortFormat| Boolean indicator indicates if the file provided is short format|FALSE|
 
-*myport* is and R6 class that provides handle to the uploaded object. You can use this handle to query properties of the porfolio. There are several methods available under this that provide access/mutation operation on the portfolio. By default, the portfolio uploaded is visible to other users within your space, however, if you want to make it private, that can be done by changing the security properties of the portfolio. Portfolio can be mutated by the user. 
 
 
 ### B. Using a Data Frame
@@ -96,8 +100,21 @@ myport<-wq.port.upload('MyPortfolio1',header=colnames(df),data=df,global=FALSE,p
 
 *Internally the upload File API calls the upload data*
 
+*Below are the arguments used by upload File API:*
+
+|Arg|Description|Default|
+|---|----|---|
+|id| Unique Id for the portfolio | None |
+|header | Location of the file | None|
+|data | Data Frame  | None|
+|global| Boolean indicator to restrict universe mapping to US, when set to false, the portfolio is assumed US/CA|TRUE|
+|pitId|Boolean indicator, True indicates that provided identifiers are point in time |TRUE|
+|shortFormat| Boolean indicator indicates if the file provided is short format|FALSE|
+
 
 ### C. Using Lquant Matrix
+
+Lquant matrices generated using prior calls to lquant code can be used to save portfolio. At minimum, the API requires 2 matrices, (1) In Flag Matrix, and (2) Weight Matrix. 
 
 #### *RCode*
 ```R
@@ -114,6 +131,15 @@ dimnames(weight) <- dimnames(s1)
 p1<-wq.port.uploadMatrix('QESTEST',list(IN=ifelse(!is.na(weight) & weight != 0, TRUE, FALSE), WEIGHT=weight),'IN')
 p1$uploadAttributes()
 ```
+
+*Below are the arguments used by upload Matrix API:*
+|Arg|Description|Default|
+|---|----|---|
+|id| Unique Id for the portfolio | None |
+|header | Location of the file | None|
+|dataMatrics | List of data matrices containing in flag  | None|
+|idxFlag| Mnemonic for the membership flag in the dataMatrices |TRUE|
+
 
 
 ## 2. Access API
@@ -270,10 +296,12 @@ Returns are computed at the daily frequency, whereas turnover if applicable is c
 
 #### $return
 |2010-04-30|2010-05-03|2010-05-04|
+|----------|----------|----------|
 |0.00000000|0.0126469| -0.0220854|
 
 #### $turnover
 |2010-04-30|2010-05-31|
+|--------|--------|
 |0.50|0.35|
 
 
@@ -283,109 +311,15 @@ Returns are computed at the daily frequency, whereas turnover if applicable is c
 
 Additional rebalance dates can be added to the portfolio using the append API. 
 
-
-#### *R Code*
 ```R
-myPort$append()
-```
-#### *Python Code*
-```python
-myPort.compute_returns()
-
-
-
-## R API
-
-R API is provided within the [wquantR](https://github.com/wolferesearch/docs/blob/master/r-api/wquantR.pdf) package hosted on our platform. The set of function exposed as wq.port provide access to the functions. Please the documentation within RStudio console for these functions. 
-
-Here are specific example of the upload data
-
-
-#### Uploading Portfolio using *wq.port.uploadFile*
-
-```R
-myport<-wq.port.uploadFile('MyPortfolio1',''/mnt/ebs1/data/Share/sample/LongPort.csv',
-															,global=FALSE,pitId=FALSE,shortFormat=FALSE)
-```
-*myport* is and R6 class that provides handle to the uploaded object. You can use this handle to query properties of the porfolio. There are several methods available under this that provide access/mutation operation on the portfolio. By default, the portfolio uploaded is visible to other users within your space, however, if you want to make it private, that can be done by changing the security properties of the portfolio. Portfolio can be mutated by the user. 
-
-
-
-1. delete (Deletes the portfolio)
-2. exists (Checks if the portfolio exists in the database)
-3. id     (String id for the portfolio)
-4. owner  (Login name of the person who uploaded the portfolio)
-5. summary (Quick summary of the portfolio in terms of number of stocks and start date)
-6. unmapped (List of Unmapped identifiers)
-7. uploadAttributes(This is the method to upload the attributes and is only supported for long format file). This should be called immediately after the upload of long format file. 
-
-
-
-
-### 2. Short Format
-
-Short format is just membership list, hence it captures the tenure pair of security membership in the index, here is a simple example of portfolio in short format
-
-|TICKER|STARTDATE|ENDDATE|
-|------|---------|--------|
-|MSFT|30-Apr-2010|30-Jun-2010|
-|IBM |30-Apr-2010|30-May-2010|
-|AAPL|30-Apr-2010|30-Jun-2010|
-|GOOG|31-May-2010|30-Jun-2010|
-
-While this format is quick to upload and faster to work with, this does not allow custom attributes to be uploaded. 
-
-Click [here](https://raw.githubusercontent.com/wolferesearch/docs/master/sample/ShortFormatPort.csv) to download a sample Long Format File. 
-
-## Identifier
-
-LQuant Portfolio Uploader supports SEDOL(7 character), TICKER and CUSIP(9 character) as identifier to link security internally. The security can be linked either using the point in time identifier (more accurate) or most recent identifier. The uploader uses the header names to detect the Identifier. In case there are multiple identifier in the file/data then it searches in the following order SEDOL, CUSIP, TICKER. 
-
-1. SEDOL
-2. CUSIP
-3. TICKER
-
-
-
-## Mapping (Global vs US/Canada)
-Portfolio can be uploaded in Global or US/Canada mode. Since internally LQuant maintains separate identifiers for US/Canada stocks, it is usually advisable to use the US/Canada mode for US/Canada universe. This way, there is less loss when mapping the identifier to internal one. 
-
-
-
-
-
-Once the portfolio is uploaded you can use it as an LQuant Universe. For long format files, please ensure to call uploadAttributes() method in order to ensure that factor data is also persisted in the database. 
-
-Querying Data
-
-```R
-data<-wq.getdata(wq.newRequest()$runFor('MyPortfolio1')$from('2012-02-28')$to('2017-02-28')$at('1m')$a('IN_MyPortfolio1')$a('MyPortfolio1_Weight')$a('PRCCD'))
+wq.port.append('XX1',header=c('QESID','DATE','WEIGHT'),data=matrix(c('006066.01','2010-06-30',0.5,'012141.01','2010-06-30','0.5'),nrow=2,byrow = TRUE),
+                pitId=TRUE)
 ```
 
-The above function will use the securities in the uploaded portfolio to query data at monthly frequency from the LQuant Data API. Note that *MyPortfolio1_Weight* is a custom factor that was uploaded in the database using the long format file
-
-
-#### Listing portfolio using the *wq.port.list* function
-
-```R
-	allcustomports<-wq.port.list()
-  myports<-wq.port.list(TRUE)
-```
-
-The function takes a boolean flag to filter out porftolio portfolios that are uploaded by other users. Note that you can access other users portfolios, but cannot delete or update them. The id is unique in the system, hence if one user has used *MyPortfolio1* as the Id for the portfolio, it cannot be used by another user. 
-
-
-
-
-
-
-## Python API
-Coming Soon
-
-
- 
-
-
-
-
+|Arg|Description|Default|
+|---|----|---|
+|id| Unique Id for the portfolio | None |
+|header | Header of the data | None|
+|data| Data Frame containing the update portfolio| None |
+|pitId|Boolean indicator, True indicates that provided identifiers are point in time |TRUE|
 
