@@ -305,7 +305,9 @@ Returns are computed at the daily frequency, whereas turnover if applicable is c
 |0.50|0.35|
 
 
-## 4. Mutation API
+## 4. Mutation API 
+
+*The feature is protected, this is only accessible by the owner of the portfolio. For all other users, any mutation attempt will result in error*
 
 ### A. Append to Existing Portfolio
 
@@ -323,3 +325,123 @@ wq.port.append('XX1',header=c('QESID','DATE','WEIGHT'),data=matrix(c('006066.01'
 |data| Data Frame containing the update portfolio| None |
 |pitId|Boolean indicator, True indicates that provided identifiers are point in time |TRUE|
 
+
+### B. Add Returns/Turnover to the Database
+
+Computed returns can be persisted in the database by using addReturn and addTurnover call. 
+
+#### *R Code*
+```R
+ret <- myPort.computeReturns()
+myPort$addReturns(ret$return)
+myPort$addTurnover(ret$turnover)
+
+```
+
+#### *Python Code*
+```python
+ret <- myPort.compute_returns()
+myPort.add_returns(ret.return)
+myPort.add_turnover(ret.turnover)
+
+```
+
+A few things to note about adding returns
+- Returns for a date can be only added once
+- If a return for a date is added again, it would result in an error
+
+
+### C. Deleting Returns/Turnover
+
+
+Returns in the database can be deleted using a simple Delete API
+
+#### *R Code*
+```R
+# Delete return for one date
+myPort$deleteReturns(date = '2010-07-30')  
+
+# Delete all returns
+myPort$deleteAllReturns
+```
+
+#### *Python Code*
+```python
+
+myPort.deleteReturns(date = '2010-07-30')  
+
+# Delete all returns
+myPort.deleteAllReturns()
+
+```
+
+Deleting turnover has a similar API. 
+
+### C. Add String Parameters 
+
+Custom string parameters can be added 
+
+#### *R Code*
+```R
+myPort$setParam('Benchmark','SP500')
+```
+
+#### *Python Code*
+```python
+myPort.set_param('Benchmark','SP500')
+```
+
+### D. Deleting Parameters
+#### *R Code*
+```R
+# Delete one parameter
+myPort$deleteParam('Benchmark')
+
+# Delete all parameters
+myPort$deleteAllParams()
+```
+
+#### *Python Code*
+```python
+
+# Delete one parameter
+myPort.delete_param('Benchmark')
+
+# Delete all parameters
+myPort.delete_all_params()
+```
+
+## 4. Accessing Retursn/Return Statistics/Parameters
+
+### A. Accessing pre-computed returns
+#### *R Code*
+```R
+myPort$returns()
+```
+
+#### *Python Code*
+```python
+myPort.returns()
+```
+
+### B. Accessing returns statistics
+#### *R Code*
+```R
+myPort$returnStats()
+```
+
+#### *Python Code*
+```python
+myPort.return_stats()
+```
+
+
+### C. Accessing String params
+```R
+myPort$param('Benchmark')
+```
+
+#### *Python Code*
+```python
+myPort.param('Benchmark')
+```
