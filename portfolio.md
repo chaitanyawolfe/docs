@@ -57,24 +57,64 @@ Click [here](https://raw.githubusercontent.com/wolferesearch/docs/master/sample/
 After uploading LQuant will make the universe constituents available to the user and also provide WEIGHT as a factor. 
 
 
-## 1. <span style="color:blue">Uploading the Portfolio</span>
+# API (Python & R)
+
+## 1. Uploading Portfolio
+
+### A. Using a CSV File
 
 Portfolio can be uploading using either R or python API. 
 
 
-### RCode
+#### *RCode*
 ```R
-myport<-wq.port.uploadFile('MyPortfolio1','/mnt/ebs1/data/Share/sample/LongPort.csv',global=FALSE,pitId=FALSE,shortFormat=FALSE)
+myport<-wq.port.uploadFile('XXX','LongPort.csv',global=FALSE,pitId=FALSE,shortFormat=FALSE)
 ```
 
-### Python Code
+#### *Python Code*
 ```python
-from lquantPy import LQuant
-wq = LQuant.LQuant()
-myPort = wq.port_upload_file('MyPortfolio1','/mnt/ebs1/data/Share/sample/LongPort.csv',global=FALSE,pitId=FALSE,shortFormat=FALSE)
+myPort = wq.port_upload_file('XXX','LongPort.csv',global=FALSE,pitId=FALSE,shortFormat=FALSE)
 ```
+
+|Arg|Description|Default|
+|---|----|---|
+|id| Unique Id for the portfolio | None |
+|file | Location of the file | None|
+|global| Boolean indicator to restrict universe mapping to US, when set to false, the portfolio is assumed US/CA|TRUE|
+|pitId|Boolean indicator, True indicates that provided identifiers are point in time |TRUE|
+|shortFormat| Boolean indicator indicates if the file provided is short format|FALSE|
 
 *myport* is and R6 class that provides handle to the uploaded object. You can use this handle to query properties of the porfolio. There are several methods available under this that provide access/mutation operation on the portfolio. By default, the portfolio uploaded is visible to other users within your space, however, if you want to make it private, that can be done by changing the security properties of the portfolio. Portfolio can be mutated by the user. 
+
+
+### B. Using a Data Frame
+#### *RCode*
+```R
+df<-read.csv('LongPort.csv',stringsAsFactors=FALSE)
+myport<-wq.port.upload('MyPortfolio1',header=colnames(df),data=df,global=FALSE,pitId=FALSE,shortFormat=FALSE)
+```
+
+*Internally the upload File API calls the upload data*
+
+
+### C. Using Lquant Matrix
+
+#### *RCode*
+```R
+
+# Pull a factor from lquant
+req<-wq.newRequest()$runFor('SP500')$from('2004-01-03')$to('2018-07-03')$at('1m')$a('QES_LEAP_1_SCORE')$addInFlag()
+req$forFactor('QES_LEAP_1_SCORE')$mask()$znormal()
+s1<-basic.quantileMatrix(wq.getdata(req)[[1]],qnum=10)
+weight <- backtest.quantileMatrixToWeight(s1,qnum=10,longBinIndex = 10,shortBinIndex = 1)
+dimnames(weight) <- dimnames(s1)
+
+
+# Upload portfolio constructed from factor
+p1<-wq.port.uploadMatrix('QESTEST',list(IN=ifelse(!is.na(weight) & weight != 0, TRUE, FALSE), WEIGHT=weight),'IN')
+p1$uploadAttributes()
+```
+
 
 ## 2. Access API
 
@@ -82,11 +122,11 @@ myPort = wq.port_upload_file('MyPortfolio1','/mnt/ebs1/data/Share/sample/LongPor
 
 Provides a succinct summary of the portfolio, i.e., Start Date, End Date, Number of Securities, Mapped Securities. The output comes back a simple data frame. Below are code snippets from R and python languages
 
-### R Code
+#### *R Code*
 ```R
 myPort$summary()
 ```
-### Python Code
+#### *Python Code*
 ```python
 myPort.summary()
 ```
@@ -103,11 +143,11 @@ myPort.summary()
 
 The identifiers in the portfolio file are mapped to LQuant internal identifier (QESID). In some cases, when the system is unable to map them based on the criteria. In such a scenario, the unmapped securities can be accessed
 
-### R Code
+#### *R Code*
 ```R
 myPort$unmapped()
 ```
-### Python Code
+#### *Python Code*
 ```python
 myPort.unmapped()
 ```
@@ -120,11 +160,11 @@ myPort.unmapped()
 
 Additional columns in the uploaded file (or data frame) is exposed as lquant attributes (prefixed with universe id). List of attributes can be accessed via a simple function. Below is the code to access the list
 
-### R Code
+#### *R Code*
 ```R
 myPort$attributes()
 ```
-### Python Code
+#### *Python Code*
 ```python
 myPort.attributes()
 ```
@@ -137,11 +177,11 @@ myPort.attributes()
 
 The owner (username) can be accessed via owner function
 
-### R Code
+#### *R Code*
 ```R
 myPort$owner()
 ```
-### Python Code
+#### *Python Code*
 ```python
 myPort.owner()
 ```
@@ -150,38 +190,107 @@ myPort.owner()
 
 Rebalance dates can be accessed via dates function
 
-### R Code
+#### *R Code*
 ```R
 myPort$dates()
 ```
-### Python Code
+#### *Python Code*
 ```python
 myPort.dates()
 ```
+
+|Date|
+|---|
+|2010-04-30|
+|2010-05-31|
 
 ### F. Constituents
 
-There are 2 functions 
+__For one Date__
 
-### R Code
+#### *R Code*
 ```R
-myPort$dates()
+myPort$constituents('2010-04-30')
 ```
-### Python Code
+#### *Python Code*
 ```python
-myPort.dates()
+myPort.constituents('2010-04-30')
 ```
-
 |ID|WEIGHT|
 |--|-----|
 |012141.01|.2|
 |160329.01|.2|
 |001690.01|.5|
 
+### G. Portfolio Data
+
+Lquant uses list of matrices as the main data structure for analyzing. Portfolio data can be pulled from database using a simple API.  
+
+#### *R Code*
+```R
+myPort$asLquantMatrix()
+```
+#### *Python Code*
+```python
+myPort.asLquantMatrix()
+```
 
 
-## Backtest API
+#### WEIGHT
 
+||2010-04-30|2010-05-31|
+|---|---|---|
+|012141.01|0.3|0.2|
+|001690.01|0.4|0.5|
+|006066.01|0.3|NA|
+|160329.01|NA|0.2|
+
+There are optional arguments that can be used to restrict the data. 
+
+|Arg| Description|Default|
+|---| -----------|----|
+|dates|Dates array for which data to be pulled, should align with rebalance | NULL, all dates are pulled|
+|factor_ids|Array of factor names, without universe prefix | NULL, all factors are pulled |
+
+
+## 3. Compute Returns
+
+API allows easy computation of returns and turnover. 
+
+#### *R Code*
+```R
+myPort$computeReturns()
+```
+#### *Python Code*
+```python
+myPort.compute_returns()
+```
+
+Returns are computed at the daily frequency, whereas turnover if applicable is computed 
+
+#### $return
+|2010-04-30|2010-05-03|2010-05-04|
+|0.00000000|0.0126469| -0.0220854|
+
+#### $turnover
+|2010-04-30|2010-05-31|
+|0.50|0.35|
+
+
+## 4. Mutation API
+
+### A. Append to Existing Portfolio
+
+Additional rebalance dates can be added to the portfolio using the append API. 
+
+
+#### *R Code*
+```R
+myPort$append()
+```
+#### *Python Code*
+```python
+myPort.compute_returns()
 
 
 
