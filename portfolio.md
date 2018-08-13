@@ -95,7 +95,7 @@ myPort = wq.port_upload_file('XXX','LongPort.csv',global=FALSE,pitId=FALSE,short
 #### *RCode*
 ```R
 df<-read.csv('LongPort.csv',stringsAsFactors=FALSE)
-myport<-wq.port.upload('MyPortfolio1',header=colnames(df),data=df,global=FALSE,pitId=FALSE,shortFormat=FALSE)
+myport<-wq.port.upload('XXX',header=colnames(df),data=df,global=FALSE,pitId=FALSE,shortFormat=FALSE)
 ```
 
 *Internally the upload File API calls the upload data*
@@ -143,6 +143,36 @@ p1$uploadAttributes()
 
 
 ## 2. Access API
+
+### List of Portfolios
+
+You can get the list of portfolios previously uploaded using the list API
+
+#### *R Code*
+```R
+wq.port.list(currUserOnly = TRUE)
+```
+#### *Python Code*
+```python
+wq.port_list(currUserOnly = TRUE)
+```
+
+
+### Get Portfolio Handle
+
+Previously saved portfolio can be pulled by using the name of the portfolio. 
+#### *R Code*
+```R
+myPort <- wq.port.get('XXX')
+```
+#### *Python Code*
+```python
+myPort = wq.get_port('XXX')
+```
+
+Portfolio uploaded by other users can also be inspected using the handle. 
+
+
 
 ### A. Summary
 
