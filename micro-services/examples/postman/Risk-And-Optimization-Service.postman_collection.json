@@ -17,12 +17,12 @@
 							"basic": [
 								{
 									"key": "password",
-									"value": "hjain123",
+									"value": "{{password}}",
 									"type": "string"
 								},
 								{
 									"key": "username",
-									"value": "hjain",
+									"value": "{{uname}}",
 									"type": "string"
 								}
 							]
@@ -54,12 +54,12 @@
 							"basic": [
 								{
 									"key": "password",
-									"value": "hjain123",
+									"value": "{{password}}",
 									"type": "string"
 								},
 								{
 									"key": "username",
-									"value": "hjain",
+									"value": "{{uname}}",
 									"type": "string"
 								}
 							]
@@ -92,12 +92,12 @@
 							"basic": [
 								{
 									"key": "password",
-									"value": "hjain123",
+									"value": "{{password}}",
 									"type": "string"
 								},
 								{
 									"key": "username",
-									"value": "hjain",
+									"value": "{{uname}}",
 									"type": "string"
 								}
 							]
@@ -130,12 +130,12 @@
 							"basic": [
 								{
 									"key": "password",
-									"value": "hjain123",
+									"value": "{{password}}",
 									"type": "string"
 								},
 								{
 									"key": "username",
-									"value": "hjain",
+									"value": "{{uname}}",
 									"type": "string"
 								}
 							]
@@ -168,12 +168,12 @@
 							"basic": [
 								{
 									"key": "password",
-									"value": "hjain123",
+									"value": "{{password}}",
 									"type": "string"
 								},
 								{
 									"key": "username",
-									"value": "hjain",
+									"value": "{{uname}}",
 									"type": "string"
 								}
 							]
@@ -210,12 +210,12 @@
 							"basic": [
 								{
 									"key": "password",
-									"value": "hjain123",
+									"value": "{{password}}",
 									"type": "string"
 								},
 								{
 									"key": "username",
-									"value": "hjain",
+									"value": "{{uname}}",
 									"type": "string"
 								}
 							]
@@ -247,12 +247,12 @@
 							"basic": [
 								{
 									"key": "password",
-									"value": "hjain123",
+									"value": "{{password}}",
 									"type": "string"
 								},
 								{
 									"key": "username",
-									"value": "hjain",
+									"value": "{{uname}}",
 									"type": "string"
 								}
 							]
@@ -292,12 +292,12 @@
 							"basic": [
 								{
 									"key": "password",
-									"value": "hjain123",
+									"value": "{{password}}",
 									"type": "string"
 								},
 								{
 									"key": "username",
-									"value": "hjain",
+									"value": "{{uname}}",
 									"type": "string"
 								}
 							]
@@ -339,12 +339,12 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "hjain123",
+							"value": "{{password}}",
 							"type": "string"
 						},
 						{
 							"key": "username",
-							"value": "hjain",
+							"value": "{{uname}}",
 							"type": "string"
 						}
 					]
@@ -376,12 +376,12 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "hjain123",
+							"value": "{{password}}",
 							"type": "string"
 						},
 						{
 							"key": "username",
-							"value": "hjain",
+							"value": "{{uname}}",
 							"type": "string"
 						}
 					]
@@ -421,12 +421,12 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "hjain123",
+							"value": "{{password}}",
 							"type": "string"
 						},
 						{
 							"key": "username",
-							"value": "hjain",
+							"value": "{{uname}}",
 							"type": "string"
 						}
 					]
@@ -442,7 +442,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n   \"userName\" : \"hjain\",\r\n   \"alpha\": \"QES_LEAP_1_SCORE\",\r\n   \"template\" : \"default\",\r\n   \"portfolio\" : \"SP500\",\r\n   \"startDate\" : \"2018-09-30\",\r\n   \"endDate\" : \"2018-12-31\",\r\n   \"freq\" : \"1me\",\r\n   \"notionalValue\" : 100000000,\r\n   \"baseCurrency\" : \"USD\",\r\n   \"riskModel\" : {\r\n     \"universe\": \"SP500\",\r\n     \"template\" : \"default\"\r\n   }\r\n}"
+					"raw": "{\r\n   \"userName\" : \"{{uname}}\",\r\n   \"alpha\": \"QES_LEAP_1_SCORE\",\r\n   \"template\" : \"default\",\r\n   \"portfolio\" : \"SP500\",\r\n   \"startDate\" : \"2018-09-30\",\r\n   \"endDate\" : \"2018-12-31\",\r\n   \"freq\" : \"1me\",\r\n   \"notionalValue\" : 100000000,\r\n   \"baseCurrency\" : \"USD\",\r\n   \"riskModel\" : {\r\n     \"universe\": \"SP500\",\r\n     \"template\" : \"default\"\r\n   }\r\n}"
 				},
 				"url": {
 					"raw": "{{URL}}/optimization/",
@@ -465,12 +465,12 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "hjain123",
+							"value": "{{password}}",
 							"type": "string"
 						},
 						{
 							"key": "username",
-							"value": "hjain",
+							"value": "{{uname}}",
 							"type": "string"
 						}
 					]
@@ -503,12 +503,12 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "hjain123",
+							"value": "{{password}}",
 							"type": "string"
 						},
 						{
 							"key": "username",
-							"value": "hjain",
+							"value": "{{uname}}",
 							"type": "string"
 						}
 					]
@@ -542,12 +542,12 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "hjain123",
+							"value": "{{password}}",
 							"type": "string"
 						},
 						{
 							"key": "username",
-							"value": "hjain",
+							"value": "{{uname}}",
 							"type": "string"
 						}
 					]
@@ -582,12 +582,12 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "hjain123",
+							"value": "{{password}}",
 							"type": "string"
 						},
 						{
 							"key": "username",
-							"value": "hjain",
+							"value": "{{uname}}",
 							"type": "string"
 						}
 					]
@@ -619,12 +619,12 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "hjain123",
+							"value": "{{password}}",
 							"type": "string"
 						},
 						{
 							"key": "username",
-							"value": "hjain",
+							"value": "{{uname}}",
 							"type": "string"
 						}
 					]
