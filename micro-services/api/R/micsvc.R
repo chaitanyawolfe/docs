@@ -3,6 +3,166 @@
 require(httr)
 require(R6)
 
+qes.microsvc.type.RISKMODEL <- 1
+qes.microsvc.type.OPTIMIZATION <- 2
+
+#' qes.microsvc.Template
+#' Generic Template Base Class
+#' 
+{
+qes.microsvc.Template <- R6Class(
+  "QESTemplate",
+  public = list(
+    val = NULL,
+    json = NULL,
+    initialize = function(val) {
+      setup(val)
+    },
+    setup = function(val){
+      self$json <- fromJSON(toJSON(val$CONTENT))
+      val$CONTENT <- NULL
+      self$val <- val
+    },
+    name = function() {
+      return(self$val$NAME)
+    },
+    type = function() {
+      return(self$val$TYPE)
+    },
+    description = function() { 
+      return(self$val$DESCRIPTION)
+    },
+    content = function() {
+      return(self$json)
+    },
+    save = function(name, conn) {
+      self$json$`__name__` <- name
+      conn$post('template',self$json)
+    }
+  )
+)
+}
+
+#' qes.microsvc.OptimizationTemplate
+#' Optimization Template
+#' 
+{
+qes.microsvc.OptimizationTemplate <- R6Class(
+  "QESOptimizationTemplate",
+  inherit = qes.microsvc.Template,
+  public = list (
+    initialize = function(raw){
+      self$setup(raw)
+    },
+    get_target_risk = function() {
+      self$json$target_risk
+    },
+    set_target_risk = function(target_risk) {
+      self$json$target_risk <- target_risk
+    },
+    get_bounds = function() {
+      self$json$bound 
+    },
+    set_bounds = function(bounds) {
+      self$json$bound <- bounds
+    },
+    get_max_ADV_participation = function() {
+      self$json$max_ADV_participation
+    },
+    set_max_ADV_participation = function(maxADVPart) {
+      self$json$max_ADV_participation <- maxADVPart 
+    },
+    get_max_turnover = function() {
+      self$json$max_turnover
+    },
+    set_max_turnover = function(turnover) {
+      self$json$turnover <- turnover
+    },
+    get_gross_weight = function() {
+      self$json$gross_weight
+    },
+    set_gross_weight = function(gross_weight) {
+      self$gross_weight <- gross_weight
+    },
+    get_net_weight = function() {
+      self$json$net_weight
+    },
+    set_net_weight = function(net_weight) {
+      self$json$net_weigth <- net_weight
+    },
+    get_objective = function() {
+      self$json$objective
+    },
+    get_benchmark = function() {
+      self$json$benchmark
+    },
+    set_benchmark = function(benchmark) {
+      self$json$benchmark <- benchmark
+    }
+  )
+)
+}
+
+
+#' qes.microsvc.RiskModelTemplate
+#' Risk Model Template
+{
+qes.microsvc.RiskModelTemplate <- R6Class(
+  "QESRiskModelTemplate",
+  inherit = qes.microsvc.Template,
+  public = list(
+    initialize = function(raw){
+      self$setup(raw)
+    },
+    factors = function() {
+      self$json$factors
+    },
+    add_factor = function(mnemonic, name) {
+      self$json$factors <- rbind(self$json$factors,c(mnemonic,name))
+    },
+    meta = function() {
+      self$json$meta
+    },
+    add_meta = function(mnemonic, name) {
+      self$json$factors <- rbind(self$json$meta,c(mnemonic,name))
+    },
+    cov_matrix_args = function() {
+      self$json$covArgs
+    },
+    set_cov_matrix_interval = function(interval) {
+      self$json$covArgs$interval <- interval
+    },
+    set_cov_matrix_var_half_life = function(var_half_life) {
+      self$json$covArgs$var.period <- var_half_life
+    },
+    set_cov_matrix_covar_half_life = function(covar_half_life) {
+      self$json$covArgs$cov.period <- covar_half_life
+    },
+    options = function() {
+      self$json$options
+    },
+    set_specific_risk_shrinkage = function(shrinkage) {
+      if (shrinkage > 1) {
+        stop('Shrinkage cannot be greater than one')
+      } 
+      if (shrinkage < 0) {
+        stop('Shrinkage cannot be less than 0')
+      }
+      self$options$spRisk$shrinkage <- shrinkage
+    }
+    
+  )
+)
+}
+
+# qes.microsvc.parse_template <- function(content) {
+#   x1 <- fromJSON(content,simplifyVector = F)
+#   lapply(x1,function(v) fromJSON(toJSON(v)))
+# }
+
+#' qes.microsvc.Conn
+#' Connection Class
+{
 qes.microsvc.Conn <- R6Class(
   "QESConnection",
   public = list(
@@ -21,7 +181,7 @@ qes.microsvc.Conn <- R6Class(
     },
     post = function(svc,body) {
       response <- httr::POST(paste0(self$URL,'/',svc),
-                      body = toJSON(body, auto_unbox=TRUE, digits=NA),
+                      body = body,
                       self$.authenticate(),
                       encode="json")
       rawToChar(response$content)
@@ -52,13 +212,36 @@ qes.microsvc.Conn <- R6Class(
     },
     success_job = function(type) {
       subset(self$.jobs(),STATUS == 'SUCCESS' & TYPEID %in% type)
+    },
+    
+    templates = function() {
+      templates <- fromJSON(self$get('template'),simplifyVector = FALSE)
+      lapply(templates,function(t) {
+        switch(t$TYPE,
+               'Risk-Model' = qes.microsvc.RiskModelTemplate$new(t),
+               'Optimization' = qes.microsvc.OptimizationTemplate$new(t),
+               t)
+        })
+    },
+    risk_templates = function() {
+      l1 <- self$templates()
+      idx <- sapply(l1,function(x) x$type() == 'Risk-Model')
+      return(l1[idx])
+    },
+    optimization_templates = function() {
+      l1 <- self$templates()
+      idx <- sapply(l1,function(x) x$type() == 'Optimization')
+      return(l1[idx])
     }
-
   )
 
-
 )
+}
 
+
+#' qes.microsvc.EntitySvc
+#' Entity service class (Base)
+{
 qes.microsvc.EntitySvc <- R6Class(
   "EntityService",
   public = list(
@@ -72,17 +255,39 @@ qes.microsvc.EntitySvc <- R6Class(
     },
     info = function() {
       self$conn$get(paste0(self$svc,'/',self$uuid))
+    },
+    get = function(path) {
+      self$conn$get(paste0(self$svc,'/',self$uuid,'/',path))
+    },
+    getdf = function(path) {
+      content <- self$conn$get(paste0(self$svc,'/',self$uuid,'/',path))
+      read.table(text=content,sep=',',header=TRUE, check.names = F)
+    },
+    wait = function(max_wait_secs = 300) {
+      ws <- 0
+      info <- fromJSON(self$info())
+      while (info$STATUS == 'STARTED' & ws < max_wait_secs) {
+        Sys.sleep(5)
+        info <- fromJSON(self$info())
+        ws <- ws + 5
+      }
+      return(info)
     }
   )
 )
+}
 
+#' qes.microsvc.Optimizer
+#' Optimizer Class
+{
 qes.microsvc.Optimizer <- R6Class(
   "QESOptimizer",
   public = list(
     conn = NULL,
     esvc = NULL,
     req = NULL,
-    typeid = 2,
+    typeid = qes.microsvc.type.OPTIMIZATION,
+    data = NULL,
 
     completed = function() {
       self$conn$success_job(self$typeid)
@@ -103,23 +308,66 @@ qes.microsvc.Optimizer <- R6Class(
     },
 
     set_id = function(uuid) {
-      self$esvc = qes.microsvc.EntitySvc$new(self$conn,'optimization',uuid)
+      self$data <- NULL
+      self$esvc <- qes.microsvc.EntitySvc$new(self$conn,'optimization',uuid)
+    },
+    
+    wait = function(max_wait_secs) {
+      if (is.null(self$esvc)) {
+        stop('No Optimization Associated with the class, either set id or create new optimization request')
+      }
+      return(self$esvc$wait(max_wait_secs))
+    },
+    
+    status = function(){
+      self$info()$STATUS
+    },
+    
+    get_data = function() {
+      if (!is.null(self$data)) {
+        return(self$data)
+      }
+      if (is.null(self$esvc)) {
+        stop('No Optimization Associated with the class, either set id or create new optimization request')
+      }
+      info <- self$info()
+      switch(info$status,
+             'STARTED' = stop('Optimization has not completed yet'),
+             'ERROR'   = stop(paste(self$esvc$uuid,' failed with message ==> [', info$message ,']')),
+             'SUCCESS' = {}
+      )
+      
+      l1 <- lapply(info$files,self$esvc$getdf)
+      names(l1) <- info$files
+      self$data <- l1
+      return(self$data)
     },
 
 
-    newRequest = function(template, univId, startDate, endDate, freq) {
+    new_request = function(portfolioId, alpha, notional, template,
+                          startDate, endDate, freq,
+                          baseCurrency = "USD",
+                          riskModel = list(universe = portfolioId, template = "default")) {
       self$esvc <- NULL
+      self$data <- NULL
       self$req <- list(
+        portfolio = portfolioId,
+        alpha = alpha,
         template = template,
-        universe = univId,
         startDate = startDate,
         endDate = endDate,
-        freq = freq
+        notionalValue = notional,
+        baseCurrency = baseCurrency,
+        freq = freq,
+        riskModel = riskModel
       )
-      response <- self$conn$post(self$req)
+      response <- self$conn$post('optimization',self$req)
       self$esvc <- qes.microsvc.EntitySvc$new(self$conn,'optimization',response)
+      
+      
     }
 
   )
 )
+}
 
