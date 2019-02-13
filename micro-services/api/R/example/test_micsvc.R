@@ -25,4 +25,27 @@ risk_model_builder$wait(max_wait_secs = 600)
 risk_model_builder$download_all('QES-Risk-Model-Data')
 
 
+# Uploading the Portfolio
+
+conn1$upload_portfolio(id = 'Custom_Port1', filename = 'sample-port.csv')
+
+# See the uploaded portfolio
+catalog <- conn1$get_catalog()
+
+portfolios <- catalog$get_portfolios()
+
+View(portfolios)
+
+# See the new factor
+
+factors <- catalog$get_factors()
+
+factors[which(startsWith(factors$ID,'Custom_Port1')),]
+
+
+View(factors)
+
+
+
+
 
