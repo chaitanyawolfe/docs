@@ -405,12 +405,12 @@ qes.microsvc.RiskModel <- R6Class(
       if (is.null(self$esvc)) {
         stop('Please create a new risk model or attach it to existing by doing set_id')
       }
-      info1 <- fromJSON(risk_model$esvc$get(""))
+      info1 <- fromJSON(self$esvc$get(""))
       return(info1$dates)
       
     },
     get_data = function(dated) {
-      info1 <- fromJSON(risk_model$esvc$get(dated))
+      info1 <- fromJSON(self$esvc$get(dated))
       l1 <- lapply(paste0(dated,"/",info1$files),self$esvc$getdf)
       names(l1) <- paste0(dated,"/",info1$files)
       return(l1)
